@@ -1,4 +1,5 @@
 ﻿using DealerVehicle.Models;
+using DealerVehicle.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,85 +12,58 @@ namespace DealerVehicle.Controllers
 {
     public class BrandController : Controller
     {
+        BrandRepo brandrepo = new BrandRepo();
+        DealerVehicleContext DB = new DealerVehicleContext();
         // GET: Brand
         public ActionResult Index()
         {
-            DealerVehicleContext Db = new DealerVehicleContext();
-            List<Brand> Brands = Db.Brand.ToList();
+
+            List<Brand> Brands = brandrepo.GetBrandAll();
             return View(Brands);
         }
         public ActionResult Details(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = DB.Brand.Find(id);
+            Brand brand = brandrepo.GetBrandById(id.Value);
+
             if (brand == null)
             {
                 return HttpNotFound();
             }
             return View(brand);
         }
+
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "BrandName")]Brand brand)
+        public ActionResult Create(Brand brand)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    DB.Brand.Add(brand);
-                    DB.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-            }
-            catch (DataException)
-            {
+                //brandrepo.
+                DB.Brand.Add(brand);
+                DB.SaveChanges();
 
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                return RedirectToAction("Index");
             }
+
             return View(brand);
         }
-        [HttpPost, ActionName("Edit")]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditPost(int? id)
+
+
+        public ActionResult Edit(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var brandToUpdate = DB.Dealer.Find(id);
-            if (TryUpdateModel(brandToUpdate, "",
-               new string[] { "BrandName"}))
-            {
-                try
-                {
-                    DB.SaveChanges();
-
-                    return RedirectToAction("Index");
-                }
-                catch (DataException)
-                {
-
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
-                }
-            }
-            return View(brandToUpdate);
-        }
-        public ActionResult Delete(int? id, bool? saveChangesError = false)
-        {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            if (saveChangesError.GetValueOrDefault())
-            {
-                ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
             }
             Brand brand = DB.Brand.Find(id);
             if (brand == null)
@@ -97,6 +71,56 @@ namespace DealerVehicle.Controllers
                 return HttpNotFound();
             }
             return View(brand);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Brand brand)
+        {
+            if (ModelState.IsValid)
+            {
+
+                DB.Brand.Add(brand);
+                DB.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(brand);
+        }
+
+
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Brand brand = DB.Brand.Find(id);
+            if (brand == null)
+            {
+                return HttpNotFound();
+            }
+            return View(brand);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Brand brand = DB.Brand.Find(id);
+            DB.Brand.Remove(brand);
+            DB.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                //db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }

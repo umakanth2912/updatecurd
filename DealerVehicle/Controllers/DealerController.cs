@@ -1,4 +1,5 @@
 ﻿using DealerVehicle.Models;
+using DealerVehicle.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,80 +12,61 @@ namespace DealerVehicle.Controllers
 {
     public class DealerController : Controller
     {
+        DealerRepo dealerRepo = new DealerRepo();
         // GET: Dealer
         public ActionResult Index()
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            List<Dealer> Dealers = DB.Dealer.ToList();
+
+            List<Dealer> Dealers = dealerRepo.GetDealerAll();
             return View(Dealers);
         }
+
         public ActionResult Details(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Dealer dealer = DB.Dealer.Find(id);
+            Dealer dealer = dealerRepo.GetDealerById(id.Value);
+            
             if (dealer == null)
             {
                 return HttpNotFound();
             }
             return View(dealer);
         }
+
+
         public ActionResult Create()
         {
             return View();
         }
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(Dealer dealer)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    DB.Dealer.Add(dealer);
-                    DB.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-            }
-            catch (DataException )
-            {
-                
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
-            }
-            return View(dealer);
-        }
-        [HttpPost]
-        public ActionResult Edit(Dealer dealer)
-        {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            if(ModelState.IsValid)
-            {
-                DB.Dealer.Add(dealer);
-                DB.SaveChanges();
+                //DB.Dealer.Add(dealer);
+                //DB.SaveChanges();
+
+                dealerRepo.InsertDealer(dealer);
+              
                 return RedirectToAction("Index");
             }
-            else
-            {
-                ModelState.AddModelError("","Unable to save changes");
-            }
-            return View();
+
+            return View(dealer);
         }
 
-        public ActionResult Delete(int? id, bool? saveChangesError = false)
+
+        public ActionResult Edit(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            if (saveChangesError.GetValueOrDefault())
-            {
-                ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
-            }
-            Dealer dealer = DB.Dealer.Find(id);
+            Dealer dealer = dealerRepo.GetDealerById(id.Value);
             if (dealer == null)
             {
                 return HttpNotFound();
@@ -92,5 +74,58 @@ namespace DealerVehicle.Controllers
             return View(dealer);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit( Dealer dealer)
+        {
+            if (ModelState.IsValid)
+            {
+
+                //DB.Dealer.Add(dealer);
+                //DB.SaveChanges();
+                dealerRepo.UpdateDealer(dealer);
+                return RedirectToAction("Index");
+            }
+            return View(dealer);
+        }
+
+
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Dealer dealer = dealerRepo.GetDealerById(id.Value);
+            if (dealer == null)
+            {
+                return HttpNotFound();
+            }
+            return View(dealer);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Dealer dealer = dealerRepo.GetDealerById(id);
+
+            dealerRepo.DeleteDealer(dealer);
+            
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                //db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
 }
+     
+
+  

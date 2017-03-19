@@ -11,85 +11,56 @@ namespace DealerVehicle.Controllers
 {
     public class ModelController : Controller
     {
+        DealerVehicleContext DB = new DealerVehicleContext();
         // GET: Model
         public ActionResult Index()
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
+            
             List<Model> Models = DB.Model.ToList();
             return View(Models);
         }
         public ActionResult Details(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Model model = DB.Model.Find(id);
+
             if (model == null)
             {
                 return HttpNotFound();
             }
             return View(model);
         }
+
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ModelName,ModelColor,ModelYear")]Model model)
+        public ActionResult Create(Model model)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    DB.Model.Add(model);
-                    DB.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-            }
-            catch (DataException)
-            {
+                DB.Model.Add(model);
+                DB.SaveChanges();
 
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                return RedirectToAction("Index");
             }
+
             return View(model);
         }
-        [HttpPost, ActionName("Edit")]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditPost(int? id)
+
+
+        public ActionResult Edit(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var modelToUpdate = DB.Model.Find(id);
-            if (TryUpdateModel(modelToUpdate, "",
-               new string[] { "ModelName","ModelColor","ModelYear" }))
-            {
-                try
-                {
-                    DB.SaveChanges();
-
-                    return RedirectToAction("Index");
-                }
-                catch (DataException)
-                {
-
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
-                }
-            }
-            return View(modelToUpdate);
-        }
-        public ActionResult Delete(int? id, bool? saveChangesError = false)
-        {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            if (saveChangesError.GetValueOrDefault())
-            {
-                ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
             }
             Model model = DB.Model.Find(id);
             if (model == null)
@@ -98,5 +69,56 @@ namespace DealerVehicle.Controllers
             }
             return View(model);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Model model)
+        {
+            if (ModelState.IsValid)
+            {
+
+                DB.Model.Add(model);
+                DB.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+
+
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Model model = DB.Model.Find(id);
+            if (model == null)
+            {
+                return HttpNotFound();
+            }
+            return View(model);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Model model = DB.Model.Find(id);
+            DB.Model.Remove(model);
+            DB.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                //db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
+
 }

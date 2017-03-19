@@ -11,84 +11,56 @@ namespace DealerVehicle.Controllers
 {
     public class VehicleController : Controller
     {
+        DealerVehicleContext DB = new DealerVehicleContext();
         // GET: Vehicle
         public ActionResult Index()
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
+            
             List<Vehicle> Vehicles = DB.Vehicle.ToList();
             return View(Vehicles);
         }
         public ActionResult Details(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Vehicle vehicle = DB.Vehicle.Find(id);
+
             if (vehicle == null)
             {
                 return HttpNotFound();
             }
             return View(vehicle);
         }
+
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Vehicle vehicle)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    DB.Vehicle.Add(vehicle);
-                    DB.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-            }
-            catch (DataException)
-            {
+                DB.Vehicle.Add(vehicle);
+                DB.SaveChanges();
 
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                return RedirectToAction("Index");
             }
+
             return View(vehicle);
         }
-        [HttpPost, ActionName("Edit")]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditPost(int? id)
+
+
+        public ActionResult Edit(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var vehicleToUpdate = DB.Vehicle.Find(id);
-            if (TryUpdateModel(vehicleToUpdate, ""))
-            {
-                try
-                {
-                    DB.SaveChanges();
-
-                    return RedirectToAction("Index");
-                }
-                catch (DataException)
-                {
-
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
-                }
-            }
-            return View(vehicleToUpdate);
-        }
-        public ActionResult Delete(int? id, bool? saveChangesError = false)
-        {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            if (saveChangesError.GetValueOrDefault())
-            {
-                ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
             }
             Vehicle vehicle = DB.Vehicle.Find(id);
             if (vehicle == null)
@@ -97,5 +69,57 @@ namespace DealerVehicle.Controllers
             }
             return View(vehicle);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(Vehicle vehicle)
+        {
+            if (ModelState.IsValid)
+            {
+
+                DB.Vehicle.Add(vehicle);
+                DB.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(vehicle);
+        }
+
+
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Vehicle vehicle = DB.Vehicle.Find(id);
+            if (vehicle == null)
+            {
+                return HttpNotFound();
+            }
+            return View(vehicle);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            Vehicle vehicle = DB.Vehicle.Find(id);
+            DB.Vehicle.Remove(vehicle);
+            DB.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                //db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
+
+
 }

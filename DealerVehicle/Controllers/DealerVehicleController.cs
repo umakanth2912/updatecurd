@@ -11,84 +11,57 @@ namespace DealerVehicle.Controllers
 {
     public class DealerVehicleController : Controller
     {
+        DealerVehicleContext DB = new DealerVehicleContext();
         // GET: DealerVehicle
         public ActionResult Index()
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
+            
             List<DealerVehicles> dealervehicles = DB.DealerVehicle.ToList();
             return View(dealervehicles);
         }
+
         public ActionResult Details(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            DealerVehicles dealervehicles = DB.DealerVehicle.Find(id);
-            if (dealervehicles == null)
+            DealerVehicles dealervehicle = DB.DealerVehicle.Find(id);
+
+            if (dealervehicle == null)
             {
                 return HttpNotFound();
             }
-            return View(dealervehicles);
+            return View(dealervehicle);
         }
+
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(DealerVehicles dealervehicles)
+        public ActionResult Create(DealerVehicles dealervehicle)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    DB.DealerVehicle.Add(dealervehicles);
-                    DB.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-            }
-            catch (DataException)
-            {
+                DB.DealerVehicle.Add(dealervehicle);
+                DB.SaveChanges();
 
-                ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                return RedirectToAction("Index");
             }
-            return View(dealervehicles);
+
+            return View(dealervehicle);
         }
-        [HttpPost, ActionName("Edit")]
-        [ValidateAntiForgeryToken]
-        public ActionResult EditPost(int? id)
+
+
+        public ActionResult Edit(int? id)
         {
-            DealerVehicleContext DB = new DealerVehicleContext();
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            var dealervehicleToUpdate = DB.DealerVehicle.Find(id);
-            if (TryUpdateModel(dealervehicleToUpdate, ""))
-            {
-                try
-                {
-                    DB.SaveChanges();
-
-                    return RedirectToAction("Index");
-                }
-                catch (DataException)
-                {
-
-                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator.");
-                }
-            }
-            return View(dealervehicleToUpdate);
-        }
-        public ActionResult Delete(int? id, bool? saveChangesError = false)
-        {
-            DealerVehicleContext DB = new DealerVehicleContext();
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            if (saveChangesError.GetValueOrDefault())
-            {
-                ViewBag.ErrorMessage = "Delete failed. Try again, and if the problem persists see your system administrator.";
             }
             DealerVehicles dealervehicle = DB.DealerVehicle.Find(id);
             if (dealervehicle == null)
@@ -97,5 +70,56 @@ namespace DealerVehicle.Controllers
             }
             return View(dealervehicle);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(DealerVehicles dealervehicle)
+        {
+            if (ModelState.IsValid)
+            {
+
+                DB.DealerVehicle.Add(dealervehicle);
+                DB.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(dealervehicle);
+        }
+
+
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            DealerVehicles dealervehicle = DB.DealerVehicle.Find(id);
+            if (dealervehicle == null)
+            {
+                return HttpNotFound();
+            }
+            return View(dealervehicle);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            DealerVehicles dealervehicle = DB.DealerVehicle.Find(id);
+            DB.DealerVehicle.Remove(dealervehicle);
+            DB.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                //db.Dispose();
+            }
+            base.Dispose(disposing);
+        }
     }
+
 }
