@@ -1,0 +1,53 @@
+﻿@model DealerVehicle.Models.Dealer
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Dealer</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.DealerName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DealerName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DealerCity)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DealerCity)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DealerCountry)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DealerCountry)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DealerPhoneNumber)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DealerPhoneNumber)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    <a href="@Url.Action("AssignVehicle","DealerVehicle",new { dealerid = Model.DealerId})">
+   Add Vehicle 
+    </a>|
+    @Html.ActionLink("Edit", "Edit", new { id = Model.DealerId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

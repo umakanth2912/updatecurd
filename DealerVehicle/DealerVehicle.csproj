@@ -213,6 +213,10 @@
     <Compile Include="Migrations\201703172310279_Initial.Designer.cs">
       <DependentUpon>201703172310279_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201703192134257_ChangeRelationOfVehicle.cs" />
+    <Compile Include="Migrations\201703192134257_ChangeRelationOfVehicle.Designer.cs">
+      <DependentUpon>201703192134257_ChangeRelationOfVehicle.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Brand.cs" />
@@ -288,14 +292,32 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Dealer\Index.cshtml" />
+    <Content Include="Views\Dealer\Create.cshtml" />
+    <Content Include="Views\Dealer\Details.cshtml" />
+    <Content Include="Views\Dealer\Edit.cshtml" />
+    <Content Include="Views\Dealer\Delete.cshtml" />
+    <Content Include="Views\Brand\Create.cshtml" />
+    <Content Include="Views\Brand\Edit.cshtml" />
+    <Content Include="Views\Brand\Delete.cshtml" />
+    <Content Include="Views\Brand\Details.cshtml" />
+    <Content Include="Views\Brand\Index.cshtml" />
+    <Content Include="Views\Model\Index.cshtml" />
+    <Content Include="Views\Model\Details.cshtml" />
+    <Content Include="Views\Model\Create.cshtml" />
+    <Content Include="Views\Model\Edit.cshtml" />
+    <Content Include="Views\Model\Delete.cshtml" />
+    <Content Include="Views\Vehicle\Index.cshtml" />
+    <Content Include="Views\Vehicle\Details.cshtml" />
+    <Content Include="Views\Vehicle\Create.cshtml" />
+    <Content Include="Views\Vehicle\Edit.cshtml" />
+    <Content Include="Views\Vehicle\Delete.cshtml" />
+    <Content Include="Views\DealerVehicle\AssignVehicle.cshtml" />
+    <Content Include="Views\DealerVehicle\DealerInventory.cshtml" />
+    <Content Include="Views\DealerVehicle\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Brand\" />
-    <Folder Include="Views\DealerVehicle\" />
-    <Folder Include="Views\Dealer\" />
-    <Folder Include="Views\Model\" />
-    <Folder Include="Views\Vehicle\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -308,6 +330,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201703172310279_Initial.resx">
       <DependentUpon>201703172310279_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201703192134257_ChangeRelationOfVehicle.resx">
+      <DependentUpon>201703192134257_ChangeRelationOfVehicle.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>

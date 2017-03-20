@@ -13,6 +13,12 @@ namespace DealerVehicle.Repository
         {
             context = new DealerVehicleContext();
         }
+        public DealerVehicles InsertDealerVehicle(DealerVehicles dealervehicle)
+        {
+            context.DealerVehicle.Add(dealervehicle);
+            context.SaveChanges();
+            return dealervehicle;
+        }
         public List<DealerVehicles> GetDealerVehicleAll()
         {
             List<DealerVehicles> AllDealerVehicles = context.DealerVehicle.ToList();

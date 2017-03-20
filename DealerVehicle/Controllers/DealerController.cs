@@ -13,6 +13,8 @@ namespace DealerVehicle.Controllers
     public class DealerController : Controller
     {
         DealerRepo dealerRepo = new DealerRepo();
+        DealerVehicleRepo dealervehiclerepo = new DealerVehicleRepo();
+
         // GET: Dealer
         public ActionResult Index()
         {
@@ -20,6 +22,8 @@ namespace DealerVehicle.Controllers
             List<Dealer> Dealers = dealerRepo.GetDealerAll();
             return View(Dealers);
         }
+        
+
 
         public ActionResult Details(int? id)
         {
@@ -39,6 +43,7 @@ namespace DealerVehicle.Controllers
 
         public ActionResult Create()
         {
+            
             return View();
         }
 

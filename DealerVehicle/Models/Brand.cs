@@ -14,6 +14,6 @@ namespace DealerVehicle.Models
         public string BrandName { get; set; }
         
         public virtual ICollection<Model> Models { get; set; }
-        public virtual ICollection<Vehicle> Vehicles { get; set; }
+        
     }
 }

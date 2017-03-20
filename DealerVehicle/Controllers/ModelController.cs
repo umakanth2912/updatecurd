@@ -1,4 +1,5 @@
 ﻿using DealerVehicle.Models;
+using DealerVehicle.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,12 +12,13 @@ namespace DealerVehicle.Controllers
 {
     public class ModelController : Controller
     {
-        DealerVehicleContext DB = new DealerVehicleContext();
+        ModelRepo modelrepo = new ModelRepo();
+        BrandRepo brandRepo = new BrandRepo();
         // GET: Model
         public ActionResult Index()
         {
-            
-            List<Model> Models = DB.Model.ToList();
+
+            List<Model> Models = modelrepo.GetModelsAll();
             return View(Models);
         }
         public ActionResult Details(int? id)
@@ -25,7 +27,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Model model = DB.Model.Find(id);
+            Model model = modelrepo.GetModelById(id.Value);
 
             if (model == null)
             {
@@ -37,6 +39,7 @@ namespace DealerVehicle.Controllers
 
         public ActionResult Create()
         {
+            ViewBag.Brands = brandRepo.GetBrandAll().Select(x => new SelectListItem { Text = x.BrandName, Value = x.BrandId.ToString() });
             return View();
         }
 
@@ -46,8 +49,8 @@ namespace DealerVehicle.Controllers
         {
             if (ModelState.IsValid)
             {
-                DB.Model.Add(model);
-                DB.SaveChanges();
+                modelrepo.InsertModel(model);
+
 
                 return RedirectToAction("Index");
             }
@@ -62,7 +65,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Model model = DB.Model.Find(id);
+            Model model = modelrepo.GetModelById(id.Value);
             if (model == null)
             {
                 return HttpNotFound();
@@ -76,9 +79,9 @@ namespace DealerVehicle.Controllers
         {
             if (ModelState.IsValid)
             {
+                modelrepo.UpdateModel(model);
 
-                DB.Model.Add(model);
-                DB.SaveChanges();
+
                 return RedirectToAction("Index");
             }
             return View(model);
@@ -91,7 +94,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Model model = DB.Model.Find(id);
+            Model model = modelrepo.GetModelById(id.Value);
             if (model == null)
             {
                 return HttpNotFound();
@@ -104,9 +107,9 @@ namespace DealerVehicle.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Model model = DB.Model.Find(id);
-            DB.Model.Remove(model);
-            DB.SaveChanges();
+            Model model = modelrepo.GetModelById(id);
+            modelrepo.DeleteModel(model);
+
 
             return RedirectToAction("Index");
         }

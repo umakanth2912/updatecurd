@@ -37,8 +37,8 @@ namespace DealerVehicle
                    .WithMany(s => s.DealerVehicles).HasForeignKey(d => d.VehicleId).WillCascadeOnDelete(true);
 
             modelBuilder.Entity<Vehicle>()
-                   .HasRequired<Brand>(s => s.Brand)
-                   .WithMany(s => s.Vehicles).HasForeignKey(d => d.BrandId).WillCascadeOnDelete(false);
+                   .HasRequired<Model>(s => s.Model)
+                   .WithMany(s => s.Vehicles).HasForeignKey(d => d.ModelId).WillCascadeOnDelete(false);
             modelBuilder.Entity<Model>()
                    .HasRequired<Brand>(s => s.Brand)
                    .WithMany(s => s.Models).HasForeignKey(d => d.BrandId).WillCascadeOnDelete(false);

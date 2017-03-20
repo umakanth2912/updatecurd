@@ -1,4 +1,5 @@
 ﻿using DealerVehicle.Models;
+using DealerVehicle.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,22 +12,49 @@ namespace DealerVehicle.Controllers
 {
     public class DealerVehicleController : Controller
     {
-        DealerVehicleContext DB = new DealerVehicleContext();
+        DealerVehicleRepo dealervehiclerepo = new DealerVehicleRepo();
+        DealerRepo dealerRepo = new DealerRepo();
+
+        VehicleRepo vehiclerepo = new VehicleRepo();
+
         // GET: DealerVehicle
         public ActionResult Index()
         {
-            
-            List<DealerVehicles> dealervehicles = DB.DealerVehicle.ToList();
+
+            List<DealerVehicles> dealervehicles = dealervehiclerepo.GetDealerVehicleAll();
             return View(dealervehicles);
         }
+        public ActionResult DealerInventory(int dealerid)
+        {
+            ViewBag.Dealer = dealerRepo.GetDealerById(dealerid);
+            List<DealerVehicles> dealervehicleslist = dealervehiclerepo.GetDealerVehicleAll().Where(x => x.DealerId == dealerid).ToList();
+            return View(dealervehicleslist);
 
+        }
+
+        [HttpPost]
+        public ActionResult AssignVehicle(DealerVehicles dealervehicle)
+        {
+            if(ModelState.IsValid)
+            {
+                dealervehiclerepo.InsertDealerVehicle(dealervehicle);
+            }
+            return RedirectToAction("Details","Dealer", new { id = dealervehicle.DealerId });
+        }
+
+        public ActionResult AssignVehicle(int dealerid)
+        {
+            ViewBag.Vehicles = vehiclerepo.GetVehicleAll().Select(x => new SelectListItem { Text = x.Model.ModelName, Value = x.VehicleId.ToString() });
+            ViewBag.DealerId = dealerid;
+            return View();
+        }
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            DealerVehicles dealervehicle = DB.DealerVehicle.Find(id);
+            DealerVehicles dealervehicle = dealervehiclerepo.GetDealerVehicleById(id.Value);
 
             if (dealervehicle == null)
             {
@@ -35,64 +63,14 @@ namespace DealerVehicle.Controllers
             return View(dealervehicle);
         }
 
-
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(DealerVehicles dealervehicle)
-        {
-            if (ModelState.IsValid)
-            {
-                DB.DealerVehicle.Add(dealervehicle);
-                DB.SaveChanges();
-
-                return RedirectToAction("Index");
-            }
-
-            return View(dealervehicle);
-        }
-
-
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            DealerVehicles dealervehicle = DB.DealerVehicle.Find(id);
-            if (dealervehicle == null)
-            {
-                return HttpNotFound();
-            }
-            return View(dealervehicle);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(DealerVehicles dealervehicle)
-        {
-            if (ModelState.IsValid)
-            {
-
-                DB.DealerVehicle.Add(dealervehicle);
-                DB.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(dealervehicle);
-        }
-
-
+        
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            DealerVehicles dealervehicle = DB.DealerVehicle.Find(id);
+            DealerVehicles dealervehicle = dealervehiclerepo.GetDealerVehicleById(id.Value);
             if (dealervehicle == null)
             {
                 return HttpNotFound();
@@ -105,11 +83,11 @@ namespace DealerVehicle.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            DealerVehicles dealervehicle = DB.DealerVehicle.Find(id);
-            DB.DealerVehicle.Remove(dealervehicle);
-            DB.SaveChanges();
+            DealerVehicles dealervehicle = dealervehiclerepo.GetDealerVehicleById(id);
+            dealervehiclerepo.DeleteDealerVehicle(dealervehicle);
 
-            return RedirectToAction("Index");
+
+            return RedirectToAction("Index", "Dealer", new { id = dealervehicle.DealerId });
         }
 
         protected override void Dispose(bool disposing)

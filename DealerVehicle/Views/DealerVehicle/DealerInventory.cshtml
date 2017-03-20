@@ -1,0 +1,38 @@
+﻿@model IEnumerable<DealerVehicle.Models.DealerVehicles>
+
+@{
+    ViewBag.Title = "DealerInventory";
+}
+
+<h2>DealerInventory</h2>
+@ViewBag.Dealer.DealerName
+<table class="table">
+    <tr>
+        <th>
+            Model Name
+        </th>
+        <th>
+            Model Year
+        </th>
+        <th>
+            Model Color
+        </th>
+        <th>
+            Brand Name
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>@item.Vehicle.Model.ModelName</td>
+        <td>@item.Vehicle.Model.ModelYear</td>
+        <td>@item.Vehicle.Model.ModelColor</td>
+        <td>@item.Vehicle.Model.Brand.BrandName</td>
+        <td>
+            @Html.ActionLink("Delete", "Delete", new { id = item.DealerVehicleId })
+        </td>
+    </tr>
+}
+
+</table>

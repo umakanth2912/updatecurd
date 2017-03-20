@@ -13,7 +13,7 @@ namespace DealerVehicle.Controllers
     public class BrandController : Controller
     {
         BrandRepo brandrepo = new BrandRepo();
-        DealerVehicleContext DB = new DealerVehicleContext();
+        
         // GET: Brand
         public ActionResult Index()
         {
@@ -48,9 +48,9 @@ namespace DealerVehicle.Controllers
         {
             if (ModelState.IsValid)
             {
-                //brandrepo.
-                DB.Brand.Add(brand);
-                DB.SaveChanges();
+                brandrepo.InsertBrand(brand);
+                //DB.Brand.Add(brand);
+                //DB.SaveChanges();
 
                 return RedirectToAction("Index");
             }
@@ -65,7 +65,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = DB.Brand.Find(id);
+            Brand brand = brandrepo.GetBrandById(id.Value);
             if (brand == null)
             {
                 return HttpNotFound();
@@ -79,9 +79,9 @@ namespace DealerVehicle.Controllers
         {
             if (ModelState.IsValid)
             {
-
-                DB.Brand.Add(brand);
-                DB.SaveChanges();
+                brandrepo.UpdateBrand(brand);
+               // DB.Brand.Add(brand);
+                //DB.SaveChanges();
                 return RedirectToAction("Index");
             }
             return View(brand);
@@ -94,7 +94,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = DB.Brand.Find(id);
+            Brand brand = brandrepo.GetBrandById(id.Value);
             if (brand == null)
             {
                 return HttpNotFound();
@@ -107,9 +107,9 @@ namespace DealerVehicle.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Brand brand = DB.Brand.Find(id);
-            DB.Brand.Remove(brand);
-            DB.SaveChanges();
+            Brand brand = brandrepo.GetBrandById(id);
+            brandrepo.DeleteBrand(brand);
+            
 
             return RedirectToAction("Index");
         }

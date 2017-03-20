@@ -17,5 +17,7 @@ namespace DealerVehicle.Models
         public int BrandId { get; set; }
         [ForeignKey("BrandId")]
         public virtual Brand Brand { get; set; }
+
+        public virtual ICollection<Vehicle> Vehicles { get; set; }
     }
 }
