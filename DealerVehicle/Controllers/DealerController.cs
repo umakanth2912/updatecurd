@@ -13,7 +13,8 @@ namespace DealerVehicle.Controllers
     public class DealerController : Controller
     {
         DealerRepo dealerRepo = new DealerRepo();
-        DealerVehicleRepo dealervehiclerepo = new DealerVehicleRepo();
+        VehicleRepo vehiclerepo = new VehicleRepo();
+        
 
         // GET: Dealer
         public ActionResult Index()
@@ -22,8 +23,13 @@ namespace DealerVehicle.Controllers
             List<Dealer> Dealers = dealerRepo.GetDealerAll();
             return View(Dealers);
         }
-        
+        public ActionResult DealerInventory(int dealerid)
+        {
+            ViewBag.Dealer = dealerRepo.GetDealerById(dealerid);
+            List<Vehicle> vehicleslist = vehiclerepo.GetVehicleAll().Where(x => x.DealerId == dealerid).ToList();
+            return View(vehicleslist);
 
+        }
 
         public ActionResult Details(int? id)
         {
@@ -40,7 +46,7 @@ namespace DealerVehicle.Controllers
             return View(dealer);
         }
 
-
+        [Authorize(Roles ="Admin")]
         public ActionResult Create()
         {
             
@@ -64,7 +70,7 @@ namespace DealerVehicle.Controllers
             return View(dealer);
         }
 
-
+        [Authorize(Roles ="Admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -94,7 +100,7 @@ namespace DealerVehicle.Controllers
             return View(dealer);
         }
 
-
+        [Authorize(Roles ="Admin")]
         public ActionResult Delete(int? id)
         {
             if (id == null)

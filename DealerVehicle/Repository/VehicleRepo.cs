@@ -34,8 +34,7 @@ namespace DealerVehicle.Repository
         }
         public Vehicle UpdateVehicle(Vehicle vehicle)
         {
-            Vehicle VehicleToUpdate = context.Vehicle.Where(a => a.VehicleId == vehicle.VehicleId).FirstOrDefault();
-
+            context.Entry<Vehicle>(vehicle).State = System.Data.Entity.EntityState.Modified;
             context.SaveChanges();
             return (vehicle);
 

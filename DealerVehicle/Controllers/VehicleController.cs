@@ -14,7 +14,7 @@ namespace DealerVehicle.Controllers
     {
         VehicleRepo vehiclerepo = new VehicleRepo();
         ModelRepo modelrepo = new ModelRepo();
-        
+        DealerRepo dealerRepo = new DealerRepo();
         // GET: Vehicle
         public ActionResult Index()
         {
@@ -41,6 +41,7 @@ namespace DealerVehicle.Controllers
         public ActionResult Create()
         {
             ViewBag.Models = modelrepo.GetModelsAll().Select(x => new SelectListItem { Text = x.ModelName, Value = x.ModelId.ToString() });
+            ViewBag.Dealers = dealerRepo.GetDealerAll().Select(x => new SelectListItem { Text = x.DealerName, Value = x.Id.ToString() });
             return View();
         }
 
@@ -51,7 +52,7 @@ namespace DealerVehicle.Controllers
             if (ModelState.IsValid)
             {
                 vehiclerepo.InsertVehicle(vehicle);
-                
+
 
                 return RedirectToAction("Index");
             }
@@ -67,6 +68,8 @@ namespace DealerVehicle.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             Vehicle vehicle = vehiclerepo.GetVehicleById(id.Value);
+            ViewBag.Models = modelrepo.GetModelsAll().Select(x => new SelectListItem { Text = x.ModelName, Value = x.ModelId.ToString() });
+            ViewBag.Dealers = dealerRepo.GetDealerAll().Select(x => new SelectListItem { Text = x.DealerName, Value = x.Id.ToString() });
             if (vehicle == null)
             {
                 return HttpNotFound();
@@ -82,7 +85,7 @@ namespace DealerVehicle.Controllers
             {
 
                 vehiclerepo.UpdateVehicle(vehicle);
-                
+
                 return RedirectToAction("Index");
             }
             return View(vehicle);
@@ -110,7 +113,7 @@ namespace DealerVehicle.Controllers
         {
             Vehicle vehicle = vehiclerepo.GetVehicleById(id);
             vehiclerepo.DeleteVehicle(vehicle);
-            
+
 
             return RedirectToAction("Index");
         }

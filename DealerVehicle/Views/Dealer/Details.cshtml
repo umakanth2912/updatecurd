@@ -45,9 +45,6 @@
     </dl>
 </div>
 <p>
-    <a href="@Url.Action("AssignVehicle","DealerVehicle",new { dealerid = Model.DealerId})">
-   Add Vehicle 
-    </a>|
-    @Html.ActionLink("Edit", "Edit", new { id = Model.DealerId }) |
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
 </p>

@@ -35,52 +35,39 @@ namespace DealerVehicle.Migrations
                 c => new
                     {
                         VehicleId = c.Int(nullable: false, identity: true),
-                        BrandId = c.Int(nullable: false),
-                    })
-                .PrimaryKey(t => t.VehicleId)
-                .ForeignKey("dbo.Brands", t => t.BrandId)
-                .Index(t => t.BrandId);
-            
-            CreateTable(
-                "dbo.DealerVehicles",
-                c => new
-                    {
-                        DealerVehicleId = c.Int(nullable: false, identity: true),
-                        VehicleId = c.Int(nullable: false),
+                        VIN = c.Int(nullable: false),
+                        ModelId = c.Int(nullable: false),
                         DealerId = c.Int(nullable: false),
                     })
-                .PrimaryKey(t => t.DealerVehicleId)
-                .ForeignKey("dbo.Dealers", t => t.DealerId, cascadeDelete: true)
-                .ForeignKey("dbo.Vehicles", t => t.VehicleId, cascadeDelete: true)
-                .Index(t => t.VehicleId)
+                .PrimaryKey(t => t.VehicleId)
+                .ForeignKey("dbo.Dealers", t => t.DealerId)
+                .ForeignKey("dbo.Models", t => t.ModelId)
+                .Index(t => t.ModelId)
                 .Index(t => t.DealerId);
             
             CreateTable(
                 "dbo.Dealers",
                 c => new
                     {
-                        DealerId = c.Int(nullable: false, identity: true),
+                        Id = c.Int(nullable: false, identity: true),
                         DealerName = c.String(),
                         DealerCity = c.String(),
                         DealerCountry = c.String(),
                         DealerPhoneNumber = c.String(),
                     })
-                .PrimaryKey(t => t.DealerId);
+                .PrimaryKey(t => t.Id);
             
         }
         
         public override void Down()
         {
-            DropForeignKey("dbo.DealerVehicles", "VehicleId", "dbo.Vehicles");
-            DropForeignKey("dbo.DealerVehicles", "DealerId", "dbo.Dealers");
-            DropForeignKey("dbo.Vehicles", "BrandId", "dbo.Brands");
+            DropForeignKey("dbo.Vehicles", "ModelId", "dbo.Models");
+            DropForeignKey("dbo.Vehicles", "DealerId", "dbo.Dealers");
             DropForeignKey("dbo.Models", "BrandId", "dbo.Brands");
-            DropIndex("dbo.DealerVehicles", new[] { "DealerId" });
-            DropIndex("dbo.DealerVehicles", new[] { "VehicleId" });
-            DropIndex("dbo.Vehicles", new[] { "BrandId" });
+            DropIndex("dbo.Vehicles", new[] { "DealerId" });
+            DropIndex("dbo.Vehicles", new[] { "ModelId" });
             DropIndex("dbo.Models", new[] { "BrandId" });
             DropTable("dbo.Dealers");
-            DropTable("dbo.DealerVehicles");
             DropTable("dbo.Vehicles");
             DropTable("dbo.Models");
             DropTable("dbo.Brands");

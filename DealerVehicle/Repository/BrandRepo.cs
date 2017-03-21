@@ -33,10 +33,9 @@ namespace DealerVehicle.Repository
         }
         public Brand UpdateBrand(Brand brand)
         {
-            Brand BrandToUpdate = context.Brand.Where(a => a.BrandId == brand.BrandId).FirstOrDefault();
-            BrandToUpdate.BrandName = brand.BrandName;
-           
+            context.Entry<Brand>(brand).State = System.Data.Entity.EntityState.Modified;
             context.SaveChanges();
+            
             return (brand);
 
         }

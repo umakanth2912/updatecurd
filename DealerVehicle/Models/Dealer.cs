@@ -10,12 +10,12 @@ namespace DealerVehicle.Models
     public class Dealer
     {
         [Key]
-        public int DealerId { get; set; }
+        public int Id { get; set; }
         public string DealerName { get; set; }
         public string DealerCity { get; set; }
         public string DealerCountry { get; set; }
         public string DealerPhoneNumber { get; set; }
 
-        public virtual ICollection<DealerVehicles> DealerVehicles { get; set; }
+        public virtual ICollection<Vehicle> Vehicles { get; set; }
     }
 }

@@ -33,12 +33,7 @@ namespace DealerVehicle.Repository
         }
         public Model UpdateModel(Model model)
         {
-            Model ModelToUpdate = context.Model.Where(a => a.ModelId == a.ModelId).FirstOrDefault();
-            ModelToUpdate.ModelName = model.ModelName;
-            ModelToUpdate.ModelColor = model.ModelColor;
-            ModelToUpdate.ModelYear = model.ModelYear;
-
-
+            context.Entry<Model>(model).State = System.Data.Entity.EntityState.Modified;
             context.SaveChanges();
             return (model);
 

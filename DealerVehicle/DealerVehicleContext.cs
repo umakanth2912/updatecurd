@@ -22,19 +22,14 @@ namespace DealerVehicle
         public virtual DbSet<Dealer> Dealer { get; set; }
         public virtual DbSet<Vehicle> Vehicle { get; set; }
         public virtual DbSet<Model> Model { get; set; }
-        public virtual DbSet<DealerVehicles> DealerVehicle { get; set; }
 
          protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<DealerVehicles>()
-                    .HasRequired<Dealer>(s => s.Dealer) 
-                    .WithMany(s => s.DealerVehicles).HasForeignKey(d => d.DealerId).WillCascadeOnDelete(true);
-
-            modelBuilder.Entity<DealerVehicles>()
-                   .HasRequired<Vehicle>(s => s.Vehicle)
-                   .WithMany(s => s.DealerVehicles).HasForeignKey(d => d.VehicleId).WillCascadeOnDelete(true);
+            modelBuilder.Entity<Vehicle>()
+                   .HasRequired<Dealer>(d => d.Dealer) 
+                   .WithMany(v => v.Vehicles).HasForeignKey(d => d.DealerId).WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Vehicle>()
                    .HasRequired<Model>(s => s.Model)

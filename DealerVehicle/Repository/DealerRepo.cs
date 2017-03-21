@@ -22,7 +22,7 @@ namespace DealerVehicle.Repository
         public Dealer GetDealerById(int dealerId)
         {
 
-            Dealer Dealer = context.Dealer.Where(a => a.DealerId == dealerId).FirstOrDefault();
+            Dealer Dealer = context.Dealer.Where(a => a.Id == dealerId).FirstOrDefault();
             return Dealer;
         }
         public Dealer InsertDealer(Dealer dealer)
@@ -33,12 +33,9 @@ namespace DealerVehicle.Repository
         }
         public Dealer UpdateDealer(Dealer dealer)
         {
-            Dealer DealerToUpdate = context.Dealer.Where(a => a.DealerId == dealer.DealerId).FirstOrDefault();
-            DealerToUpdate.DealerName = dealer.DealerName;
-            DealerToUpdate.DealerCity = dealer.DealerCity;
-            DealerToUpdate.DealerCountry = dealer.DealerCountry;
-            DealerToUpdate.DealerPhoneNumber = dealer.DealerPhoneNumber;
+            context.Entry<Dealer>(dealer).State = System.Data.Entity.EntityState.Modified;
             context.SaveChanges();
+            
             return (dealer);
 
         }
