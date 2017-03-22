@@ -210,6 +210,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="IRepository.cs" />
     <Compile Include="Migrations\201703210202435_Initial.cs" />
     <Compile Include="Migrations\201703210202435_Initial.Designer.cs">
       <DependentUpon>201703210202435_Initial.cs</DependentUpon>
@@ -227,6 +228,7 @@
     <Compile Include="Models\Model.cs" />
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repo.cs" />
     <Compile Include="Repository\BrandRepo.cs" />
     <Compile Include="Repository\DealerRepo.cs" />
     <Compile Include="Repository\ModelRepo.cs" />

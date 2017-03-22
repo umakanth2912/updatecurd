@@ -7,37 +7,54 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using DealerVehicle;
 
 namespace DealerVehicle.Controllers
 {
     public class DealerController : Controller
     {
-        DealerRepo dealerRepo = new DealerRepo();
-        VehicleRepo vehiclerepo = new VehicleRepo();
+        //private DealerRepo dealerRepo;
+        //private VehicleRepo vehiclerepo;
+        private Repo<Vehicle> Vehicle;
+        private Repo<Dealer> Dealer;
+
+        public DealerController()
+        {
+            Dealer = new Repo<Dealer>();
+            //vehiclerepo = new VehicleRepo();
+            Vehicle = new Repo<Vehicle>();
+        }
+
+
+        //DealerRepo dealerRepo = new DealerRepo();
+        //VehicleRepo vehiclerepo = new VehicleRepo();
         
 
         // GET: Dealer
         public ActionResult Index()
         {
 
-            List<Dealer> Dealers = dealerRepo.GetDealerAll();
+
+            List<Dealer> Dealers = Dealer.Read().ToList();
             return View(Dealers);
         }
         public ActionResult DealerInventory(int dealerid)
         {
-            ViewBag.Dealer = dealerRepo.GetDealerById(dealerid);
-            List<Vehicle> vehicleslist = vehiclerepo.GetVehicleAll().Where(x => x.DealerId == dealerid).ToList();
+            ViewBag.Dealer = Dealer.Read().Where(x=> x.Id== dealerid);
+            Vehicle vehicleslist = Vehicle.Read().Where(x => x.DealerId == dealerid).FirstOrDefault();
             return View(vehicleslist);
 
         }
 
-        public ActionResult Details(int? id)
+        public ActionResult Details(int ?id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Dealer dealer = dealerRepo.GetDealerById(id.Value);
+
+            Dealer dealer = Dealer.Read().Where(x => x.Id == id).FirstOrDefault();
+        
             
             if (dealer == null)
             {
@@ -62,7 +79,7 @@ namespace DealerVehicle.Controllers
                 //DB.Dealer.Add(dealer);
                 //DB.SaveChanges();
 
-                dealerRepo.InsertDealer(dealer);
+                Dealer.Create(dealer);
               
                 return RedirectToAction("Index");
             }
@@ -77,7 +94,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Dealer dealer = dealerRepo.GetDealerById(id.Value);
+            Dealer dealer = Dealer.Read().Where(a => a.Id == id).FirstOrDefault();
             if (dealer == null)
             {
                 return HttpNotFound();
@@ -94,7 +111,7 @@ namespace DealerVehicle.Controllers
 
                 //DB.Dealer.Add(dealer);
                 //DB.SaveChanges();
-                dealerRepo.UpdateDealer(dealer);
+                Dealer.Update(dealer);
                 return RedirectToAction("Index");
             }
             return View(dealer);
@@ -107,7 +124,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Dealer dealer = dealerRepo.GetDealerById(id.Value);
+            Dealer dealer = Dealer.Read().Where(a => a.Id == id).FirstOrDefault();
             if (dealer == null)
             {
                 return HttpNotFound();
@@ -120,9 +137,9 @@ namespace DealerVehicle.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Dealer dealer = dealerRepo.GetDealerById(id);
+            Dealer dealer = Dealer.Read().Where(a => a.Id == id).FirstOrDefault();
 
-            dealerRepo.DeleteDealer(dealer);
+            Dealer.Delete(dealer);
             
             return RedirectToAction("Index");
         }

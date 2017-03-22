@@ -12,14 +12,24 @@ namespace DealerVehicle.Controllers
 {
     public class VehicleController : Controller
     {
-        VehicleRepo vehiclerepo = new VehicleRepo();
-        ModelRepo modelrepo = new ModelRepo();
-        DealerRepo dealerRepo = new DealerRepo();
+        private Repo<Vehicle> vehiclerepo;
+        private Repo<Model> modelrepo;
+        private Repo<Dealer> dealerrepo;
+        public VehicleController()
+        {
+            vehiclerepo = new Repo<Vehicle>();
+            modelrepo = new Repo<Model>();
+            dealerrepo = new Repo<Dealer>();
+
+        }
+        //VehicleRepo vehiclerepo = new VehicleRepo();
+        //ModelRepo modelrepo = new ModelRepo();
+        //DealerRepo dealerRepo = new DealerRepo();
         // GET: Vehicle
         public ActionResult Index()
         {
 
-            List<Vehicle> Vehicles = vehiclerepo.GetVehicleAll();
+            List<Vehicle> Vehicles = vehiclerepo.Read().ToList();
             return View(Vehicles);
         }
         public ActionResult Details(int? id)
@@ -28,7 +38,8 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Vehicle vehicle = vehiclerepo.GetVehicleById(id.Value);
+            //List<Vehicle> vehicle = vehiclerepo.Read().Where(a => a.VehicleId == id).ToList();
+            Vehicle vehicle = vehiclerepo.Read().Where(a => a.VehicleId == id).FirstOrDefault();
 
             if (vehicle == null)
             {
@@ -40,8 +51,8 @@ namespace DealerVehicle.Controllers
 
         public ActionResult Create()
         {
-            ViewBag.Models = modelrepo.GetModelsAll().Select(x => new SelectListItem { Text = x.ModelName, Value = x.ModelId.ToString() });
-            ViewBag.Dealers = dealerRepo.GetDealerAll().Select(x => new SelectListItem { Text = x.DealerName, Value = x.Id.ToString() });
+            ViewBag.Models = modelrepo.Read().Select(x => new SelectListItem { Text = x.ModelName, Value = x.ModelId.ToString() });
+            ViewBag.Dealers = dealerrepo.Read().Select(x => new SelectListItem { Text = x.DealerName, Value = x.Id.ToString() });
             return View();
         }
 
@@ -51,7 +62,7 @@ namespace DealerVehicle.Controllers
         {
             if (ModelState.IsValid)
             {
-                vehiclerepo.InsertVehicle(vehicle);
+                vehiclerepo.Create(vehicle);
 
 
                 return RedirectToAction("Index");
@@ -67,9 +78,9 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Vehicle vehicle = vehiclerepo.GetVehicleById(id.Value);
-            ViewBag.Models = modelrepo.GetModelsAll().Select(x => new SelectListItem { Text = x.ModelName, Value = x.ModelId.ToString() });
-            ViewBag.Dealers = dealerRepo.GetDealerAll().Select(x => new SelectListItem { Text = x.DealerName, Value = x.Id.ToString() });
+            Vehicle vehicle = vehiclerepo.Read().Where(a => a.VehicleId == id).FirstOrDefault();
+            ViewBag.Models = modelrepo.Read().Select(x => new SelectListItem { Text = x.ModelName, Value = x.ModelId.ToString() });
+            ViewBag.Dealers = dealerrepo.Read().Select(x => new SelectListItem { Text = x.DealerName, Value = x.Id.ToString() });
             if (vehicle == null)
             {
                 return HttpNotFound();
@@ -84,7 +95,7 @@ namespace DealerVehicle.Controllers
             if (ModelState.IsValid)
             {
 
-                vehiclerepo.UpdateVehicle(vehicle);
+                vehiclerepo.Update(vehicle);
 
                 return RedirectToAction("Index");
             }
@@ -98,7 +109,9 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Vehicle vehicle = vehiclerepo.GetVehicleById(id.Value);
+            Vehicle vehicle = vehiclerepo.Read().Where(a => a.VehicleId == id).FirstOrDefault();
+            ViewBag.Vehicles = modelrepo.Read().Select(x => new SelectListItem { Text = x.ModelName, Value = x.ModelId.ToString() });
+
             if (vehicle == null)
             {
                 return HttpNotFound();
@@ -111,8 +124,8 @@ namespace DealerVehicle.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Vehicle vehicle = vehiclerepo.GetVehicleById(id);
-            vehiclerepo.DeleteVehicle(vehicle);
+            Vehicle vehicle = vehiclerepo.Read().Where(a => a.VehicleId == id).FirstOrDefault();
+            vehiclerepo.Delete(vehicle);
 
 
             return RedirectToAction("Index");

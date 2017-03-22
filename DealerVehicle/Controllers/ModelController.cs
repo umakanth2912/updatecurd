@@ -12,13 +12,20 @@ namespace DealerVehicle.Controllers
 {
     public class ModelController : Controller
     {
-        ModelRepo modelrepo = new ModelRepo();
-        BrandRepo brandRepo = new BrandRepo();
+        private Repo<Model> model;
+        private Repo<Brand> brand;
+        public ModelController()
+        {
+            brand = new Repo<Brand>();
+            model = new Repo<Model>();
+        }
+       // ModelRepo modelrepo = new ModelRepo();
+        //BrandRepo brandRepo = new BrandRepo();
         // GET: Model
         public ActionResult Index()
         {
 
-            List<Model> Models = modelrepo.GetModelsAll();
+            List<Model> Models = model.Read().ToList();
             return View(Models);
         }
         public ActionResult Details(int? id)
@@ -27,35 +34,35 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Model model = modelrepo.GetModelById(id.Value);
+            Model models = model.Read().Where(x => x.ModelId == id).FirstOrDefault();
 
             if (model == null)
             {
                 return HttpNotFound();
             }
-            return View(model);
+            return View(models);
         }
 
 
         public ActionResult Create()
         {
-            ViewBag.Brands = brandRepo.GetBrandAll().Select(x => new SelectListItem { Text = x.BrandName, Value = x.BrandId.ToString() });
+            ViewBag.Brands = brand.Read().Select(x => new SelectListItem { Text = x.BrandName, Value = x.BrandId.ToString() });
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Model model)
+        public ActionResult Create(Model modeel)
         {
             if (ModelState.IsValid)
             {
-                modelrepo.InsertModel(model);
+                model.Create(modeel);
 
 
                 return RedirectToAction("Index");
             }
 
-            return View(model);
+            return View(modeel);
         }
 
 
@@ -65,26 +72,27 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Model model = modelrepo.GetModelById(id.Value);
-            if (model == null)
+            Model models = model.Read().Where(x => x.ModelId == id).FirstOrDefault();
+            ViewBag.Brands = brand.Read().Select(x => new SelectListItem { Text = x.BrandName, Value = x.BrandId.ToString() });
+            if (models == null)
             {
                 return HttpNotFound();
             }
-            return View(model);
+            return View(models);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(Model model)
+        public ActionResult Edit(Model models)
         {
             if (ModelState.IsValid)
             {
-                modelrepo.UpdateModel(model);
+                model.Update(models);
 
 
                 return RedirectToAction("Index");
             }
-            return View(model);
+            return View(models);
         }
 
 
@@ -94,12 +102,12 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Model model = modelrepo.GetModelById(id.Value);
-            if (model == null)
+            Model models = model.Read().Where(x => x.ModelId == id).FirstOrDefault();
+            if (models == null)
             {
                 return HttpNotFound();
             }
-            return View(model);
+            return View(models);
         }
 
 
@@ -107,8 +115,8 @@ namespace DealerVehicle.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Model model = modelrepo.GetModelById(id);
-            modelrepo.DeleteModel(model);
+            Model models = model.Read().Where(x => x.ModelId == id).FirstOrDefault();
+            model.Delete(models);
 
 
             return RedirectToAction("Index");

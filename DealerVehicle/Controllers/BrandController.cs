@@ -12,13 +12,18 @@ namespace DealerVehicle.Controllers
 {
     public class BrandController : Controller
     {
-        BrandRepo brandrepo = new BrandRepo();
+        public Repo<Brand> Brand;
+        public BrandController()
+        {
+            Brand = new Repo<Brand>();
+        }
+       
         
         // GET: Brand
         public ActionResult Index()
         {
 
-            List<Brand> Brands = brandrepo.GetBrandAll();
+            List<Brand> Brands = Brand.Read().ToList();
             return View(Brands);
         }
         public ActionResult Details(int? id)
@@ -27,7 +32,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = brandrepo.GetBrandById(id.Value);
+            Brand brand = Brand.Read().Where(a => a.BrandId == id).FirstOrDefault();
 
             if (brand == null)
             {
@@ -48,7 +53,7 @@ namespace DealerVehicle.Controllers
         {
             if (ModelState.IsValid)
             {
-                brandrepo.InsertBrand(brand);
+                Brand.Create(brand);
                 //DB.Brand.Add(brand);
                 //DB.SaveChanges();
 
@@ -65,7 +70,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = brandrepo.GetBrandById(id.Value);
+            Brand brand = Brand.Read().Where(x => x.BrandId == id).FirstOrDefault();
             if (brand == null)
             {
                 return HttpNotFound();
@@ -79,7 +84,7 @@ namespace DealerVehicle.Controllers
         {
             if (ModelState.IsValid)
             {
-                brandrepo.UpdateBrand(brand);
+                Brand.Update(brand);
                // DB.Brand.Add(brand);
                 //DB.SaveChanges();
                 return RedirectToAction("Index");
@@ -94,7 +99,7 @@ namespace DealerVehicle.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Brand brand = brandrepo.GetBrandById(id.Value);
+            Brand brand = Brand.Read().Where(x => x.BrandId == id).FirstOrDefault();
             if (brand == null)
             {
                 return HttpNotFound();
@@ -107,8 +112,8 @@ namespace DealerVehicle.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Brand brand = brandrepo.GetBrandById(id);
-            brandrepo.DeleteBrand(brand);
+            Brand brand = Brand.Read().Where(x => x.BrandId == id).FirstOrDefault();
+            Brand.Delete(brand);
             
 
             return RedirectToAction("Index");
