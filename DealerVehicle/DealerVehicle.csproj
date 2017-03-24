@@ -248,6 +248,7 @@
     <Compile Include="Repository\VehicleRepo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="WebAPI\DealersController.cs" />
+    <Compile Include="WebAPI\ModelsController.cs" />
     <Compile Include="WebAPI\VehiclesController.cs" />
   </ItemGroup>
   <ItemGroup>
