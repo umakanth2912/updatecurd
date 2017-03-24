@@ -12,44 +12,49 @@
     @Html.AntiForgeryToken()
 
     <div class="form-horizontal">
+        
         <h4>Model</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
-            @Html.LabelFor(model => model.ModelName, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ModelName, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ModelName, "", new { @class = "text-danger" })
-            </div>
+                @Html.LabelFor(model => model.ModelName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.ModelName, new { htmlAttributes = new { @class = "form-control",@onfocusout= "modelnamefocusout()",@onblur= "checkmodelexist()" } })
+                    <label id="validatemodelname" class="text-danger"></label>
+                    @*Html.ValidationMessageFor(model => model.ModelName, "", new { @class = "text-danger" })*@
+                </div> 
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.ModelColor, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ModelColor, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ModelColor, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.ModelColor, new { htmlAttributes = new { @class = "form-control",@onfocusout= "modelcolorfocusout()" } })
+                <label id="validatemodelcolor" class="text-danger"></label>
+                @*Html.ValidationMessageFor(model => model.ModelColor, "", new { @class = "text-danger" })*@
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.ModelYear, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.ModelYear, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ModelYear, "", new { @class = "text-danger" })
+                @Html.EditorFor(model => model.ModelYear, new { htmlAttributes = new { @class = "form-control",@onfocusout= "modelyearfocusout()"} })
+                <label id="validatemodelyear" class="text-danger"></label>
+                @*Html.ValidationMessageFor(model => model.ModelYear, "", new { @class = "text-danger" })*@
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.BrandId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("BrandId", (IEnumerable<SelectListItem>)ViewBag.Brands,"Select a Brand", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.BrandId, "", new { @class = "text-danger" })
+                @Html.DropDownList("BrandId", (IEnumerable<SelectListItem>)ViewBag.Brands,"Select a Brand", new { @class = "form-control",@onfocusout= "brandidfocusout()" })
+                <label id="validatebranid" class="text-danger"></label>
+                @*Html.ValidationMessageFor(model => model.BrandId, "", new { @class = "text-danger" })*@
             </div>
         </div>
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="button" value="Create" class="btn btn-default" />
             </div>
         </div>
     </div>
@@ -59,6 +64,66 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
+
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+   
+<script>
+    function modelnamefocusout() {
+        var modelnameelement = document.getElementById("ModelName");
+        if (modelnameelement.value == "") {
+            document.getElementById("validatemodelname").textContent = "Please enter the Model Name";
+        }
+        else {
+            document.getElementById("validatemodelname").textContent = "";
+        }
+      
+    }
+    function modelcolorfocusout() {
+        var modelcolorelement = document.getElementById("ModelColor");
+        if (modelcolorelement.value == "") {
+            document.getElementById("validatemodelcolor").textContent = "Please enter color";
+        }
+        else {
+            doument.getElementById("validatemodelcolor").textContent = "";
+        }
+
+    }
+    function modelyearfocusout() {
+        var modelyearelement = document.getElementById("ModelYear");
+        if (modelyearelement.value == "") {
+            document.getElementById("validatemodelyear").textContent = "Please enter Year";
+        }
+        else {
+            doument.getElementById("validatemodelyear").textContent = "";
+        }
+
+    }
+    function brandidfocusout() {
+        var brandidelement = document.getElementById("BrandId");
+        if (brandidelement.value == "") {
+            document.getElementById("validatebranid").textContent = "Please select the Brand";
+        }
+        else {
+            doument.getElementById("validatebranid").textContent = "";
+        }
+
+    }
+    //function checkmodelexist() {
+    //    var modelname = document.getElementById("ModelName").value;
+    //    var xmlhttp = new XMLHttpRequest();
+    //    xmlhttp.onreadystatechange = function () {
+    //        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+    //            if (xmlhttp.responseText == "\n\n\n\n Model Already Exsist") {
+    //                document.getElementById("isE").style.color = "red";
+    //            }
+    //            else {
+    //                document.getElementById("isE").style.color = "green";
+    //                document.getElementById("isE").innerHTML = xmlhttp.responseText;
+    //            }
+    //        }
+    //    }
+    //}
+    </script>
+
+
 }

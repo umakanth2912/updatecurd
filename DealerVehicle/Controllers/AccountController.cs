@@ -68,7 +68,7 @@ namespace DealerVehicle.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public async Task<ActionResult>Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
@@ -77,7 +77,7 @@ namespace DealerVehicle.Controllers
 
             User user = new User() { Email = model.Email, Password = model.Password };
 
-            user = 
+          user = 
             user = Repositorys.GetUserDetails(user);
 
             if (user != null)
