@@ -16,21 +16,36 @@ namespace DealerVehicle.WebAPI
 {
     public class ModelsController : ApiController
     {
-        private Repository.ModelRepo db = new Repository.ModelRepo();
+        //private Repository.ModelRepo db = new Repository.ModelRepo();
+        private Repo<Model> modelrepo;
+        public ModelsController()
+        {
+            modelrepo = new Repo<Model>();
+        }
 
         // GET: api/Models
         [ResponseType(typeof(List<Model>))]
         public IHttpActionResult GetModels()
         {
-            var result = JsonConvert.SerializeObject(db.GetModelsAll(), new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            var result = JsonConvert.SerializeObject(modelrepo.Read(), new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return Ok(result);
+        }
+        [Route("api/models/checkmodel/{modelname}")]
+        [HttpGet]
+        public IHttpActionResult GetModelByModelName(string modelname)
+        {
+            var resultmodel = modelrepo.Read().Where(a => a.ModelName == modelname).Count(); 
+            
+            return Ok(resultmodel);
+
         }
 
         // GET: api/Models/5
         [ResponseType(typeof(Model))]
+
         public IHttpActionResult GetModel(int id)
         {
-            Model model = db.GetModelById(id);
+            Model model = modelrepo.Read().Where(x=>x.ModelId==id).FirstOrDefault();
             if (model == null)
             {
                 return NotFound();
@@ -41,6 +56,7 @@ namespace DealerVehicle.WebAPI
 
         // PUT: api/Models/5
         [ResponseType(typeof(void))]
+        [Route]
         public IHttpActionResult PutModel(int id, Model model)
         {
             if (!ModelState.IsValid)
@@ -53,7 +69,7 @@ namespace DealerVehicle.WebAPI
                 return BadRequest();
             }
 
-            db.InsertModel(model);
+            modelrepo.Create(model);
 
             try
             {
@@ -83,7 +99,7 @@ namespace DealerVehicle.WebAPI
                 return BadRequest(ModelState);
             }
 
-           db.InsertModel(model);
+           modelrepo.Create(model);
             return CreatedAtRoute("DefaultApi", new { id = model.ModelId }, model);
         }
 
@@ -91,13 +107,13 @@ namespace DealerVehicle.WebAPI
         [ResponseType(typeof(Model))]
         public IHttpActionResult DeleteModel(int id)
         {
-            Model model = db.GetModelById(id);
+            Model model = modelrepo.Read().Where(x => x.ModelId == id).FirstOrDefault();
             if (model == null)
             {
                 return NotFound();
             }
 
-            db.DeleteModel(model);
+            modelrepo.Delete(model);
 
             return Ok(model);
         }
@@ -113,7 +129,7 @@ namespace DealerVehicle.WebAPI
 
         private bool ModelExists(int id)
         {
-            return db.GetModelsAll().Count(e => e.ModelId == id) > 0;
+            return modelrepo.Read().Count(e => e.ModelId == id) > 0;
         }
     }
 }

@@ -16,13 +16,17 @@ namespace DealerVehicle.WebAPI
 {
     public class VehiclesController : ApiController
     {
-        private Repository.VehicleRepo db = new Repository.VehicleRepo();
-
+        //private Repository.VehicleRepo db = new Repository.VehicleRepo();
+        private Repo<Vehicle> vehiclerepo;
+        public VehiclesController()
+        {
+            vehiclerepo = new Repo<Vehicle>();
+        }
         // GET: api/Vehicles
         [ResponseType(typeof(List<Vehicle>))]
         public IHttpActionResult GetVehicles()
         {
-            var result = JsonConvert.SerializeObject(db.GetVehicleAll(), new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            var result = JsonConvert.SerializeObject(vehiclerepo.Read(), new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return Ok(result);
         }
 
@@ -30,7 +34,7 @@ namespace DealerVehicle.WebAPI
         [ResponseType(typeof(Vehicle))]
         public IHttpActionResult GetVehicle(int id)
         {
-            Vehicle vehicle = db.GetVehicleById(id);
+            Vehicle vehicle = vehiclerepo.Read().Where(x => x.DealerId == id).FirstOrDefault(); ;
             if (vehicle == null)
             {
                 return NotFound();
@@ -53,7 +57,7 @@ namespace DealerVehicle.WebAPI
                 return BadRequest();
             }
 
-            db.InsertVehicle(vehicle);
+            vehiclerepo.Create(vehicle);
 
             try
             {
@@ -83,7 +87,7 @@ namespace DealerVehicle.WebAPI
                 return BadRequest(ModelState);
             }
 
-            db.InsertVehicle(vehicle);
+           vehiclerepo.Create(vehicle);
 
             return CreatedAtRoute("DefaultApi", new { id = vehicle.VehicleId }, vehicle);
         }
@@ -92,13 +96,13 @@ namespace DealerVehicle.WebAPI
         [ResponseType(typeof(Vehicle))]
         public IHttpActionResult DeleteVehicle(int id)
         {
-            Vehicle vehicle = db.GetVehicleById(id);
+            Vehicle vehicle = vehiclerepo.Read().Where(x => x.DealerId == id).FirstOrDefault();
             if (vehicle == null)
             {
                 return NotFound();
             }
 
-            db.DeleteVehicle(vehicle);
+           vehiclerepo.Delete(vehicle);
 
             return Ok(vehicle);
         }
@@ -114,7 +118,7 @@ namespace DealerVehicle.WebAPI
 
         private bool VehicleExists(int id)
         {
-            return db.GetVehicleAll().Count(e => e.VehicleId == id) > 0;
+            return vehiclerepo.Read().Count(e => e.VehicleId == id) > 0;
         }
     }
 }

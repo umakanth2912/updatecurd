@@ -17,13 +17,18 @@ namespace DealerVehicle.WebAPI
 {
     public class DealersController : ApiController
     {
-        private DealerRepo db = new DealerRepo();
+        //private DealerRepo db = new DealerRepo();
+        private Repo<Dealer> dealerrepo;
+        public DealersController()
+        {
+            dealerrepo = new Repo<Dealer>();
+        }
 
         // GET: api/Dealers
         [ResponseType(typeof(List<Dealer>))]
         public IHttpActionResult GetDealers()
         {
-            var result = JsonConvert.SerializeObject(db.GetDealerAll(), new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
+            var result = JsonConvert.SerializeObject(dealerrepo.Read(), new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return Ok(result);
         }
 
@@ -31,7 +36,7 @@ namespace DealerVehicle.WebAPI
         [ResponseType(typeof(Dealer))]
         public IHttpActionResult GetDealer(int id)
         {
-            Dealer dealer = db.GetDealerById(id);
+            Dealer dealer =  dealerrepo.Read().Where(x => x.Id == id).FirstOrDefault(); 
             if (dealer == null)
             {
                 return NotFound();
@@ -54,7 +59,7 @@ namespace DealerVehicle.WebAPI
                 return BadRequest();
             }
 
-            db.InsertDealer(dealer);
+           dealerrepo.Create(dealer);
 
             try
             {
@@ -84,7 +89,7 @@ namespace DealerVehicle.WebAPI
                 return BadRequest(ModelState);
             }
 
-            db.InsertDealer(dealer);
+            dealerrepo.Create(dealer);
 
             return CreatedAtRoute("DefaultApi", new { id = dealer.Id }, dealer);
         }
@@ -93,13 +98,13 @@ namespace DealerVehicle.WebAPI
         [ResponseType(typeof(Dealer))]
         public IHttpActionResult DeleteDealer(int id)
         {
-            Dealer dealer = db.GetDealerById(id);
+            Dealer dealer = dealerrepo.Read().Where(x => x.Id == id).FirstOrDefault();
             if (dealer == null)
             {
                 return NotFound();
             }
 
-            db.DeleteDealer(dealer);
+           dealerrepo.Delete(dealer);
 
             return Ok(dealer);
         }
@@ -115,7 +120,7 @@ namespace DealerVehicle.WebAPI
 
         private bool DealerExists(int id)
         {
-            return db.GetDealerAll().Count(e => e.Id == id) > 0;
+            return dealerrepo.Read().Count(e => e.Id == id) > 0;
         }
     }
 }

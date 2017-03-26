@@ -16,6 +16,11 @@ namespace DealerVehicle
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+            //config.Routes.MapHttpRoute(
+            //    name: "Api_Api_Default",
+            //    routeTemplate: "{controller}/api/{action}/{id}",
+            //    defaults: new { id = RouteParameter.Optional }
+            //    );
         }
     }
 }
