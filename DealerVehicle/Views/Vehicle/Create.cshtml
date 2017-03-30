@@ -19,21 +19,24 @@
             @Html.LabelFor(model => model.VIN, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.TextBoxFor(model=> model.VIN, htmlAttributes: new { @class= "form-control" })
-                @Html.ValidationMessageFor(model => model.VIN, "", new { @class = "text-danger" })
+                <label id="vin"></label>
+                @*Html.ValidationMessageFor(model => model.VIN, "", new { @class = "text-danger" })*@
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.ModelId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("ModelId", (IEnumerable<SelectListItem>)ViewBag.Models, "Select a Model", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.ModelId, "", new { @class = "text-danger" })
+               <label id="modelid"></label>
+                 @*Html.ValidationMessageFor(model => model.ModelId, "", new { @class = "text-danger" })*@
             </div>
         </div>
         <div class="form-group">
             @Html.LabelFor(model => model.DealerId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("DealerId", (IEnumerable<SelectListItem>)ViewBag.Dealers, "Select a dealer", new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.DealerId, "", new { @class = "text-danger" })
+    <label id="dealerid"></label>            
+    @*Html.ValidationMessageFor(model => model.DealerId, "", new { @class = "text-danger" })*@
             </div>
         </div>
 
@@ -49,6 +52,64 @@
     @Html.ActionLink("Back to List", "Index")
 </div>
 
+
 @section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    var vinonfocusout = function () {
+        var vinn = $("#VIN").val();
+
+        if (vinn == "") {
+            $("#vin").text("Please enter the VIN Number").css('color', 'red');
+
+        }
+        else {
+            $("#vin").text("");
+        }
+    }
+    var modelidonfocusout = function () {
+        var modlid = $("#ModelId").val();
+
+        if (modlid == "") {
+            $("#modelid").text("Please enter the Model Id").css('color', 'red');
+
+        }
+        else {
+            $("#modelid").text("");
+        }
+    }
+    var dealeridonfocusout = function () {
+        var delrid = $("#DealerId").val();
+
+        if (delrid == "") {
+            $("#dealerid").text("Please enter the Dealer Id").css('color', 'red');
+
+        }
+        else {
+            $("#dealerid").text("");
+        }
+    }
+    $("#VIN").focusout(vinonfocusout);
+    $("#ModelId").focusout(modelidonfocusout);
+    $("#DealerId").focusout(dealeridonfocusout);
+
+    function checkvinalreadyexist() {
+        var vinnumber = $("#VIN").val();
+        $.get("../api/vehicles/checkvin/" + vinnumber, responsecompleted);
+    }
+    var responsecompleted = function (response) {
+        if (response != 0) {
+            $("#vin").text("VIN already Exist").css("color", "red");
+        }
+        else {
+            $("#vin").text("VIN Available").css("color", "green");
+        }
+    }
+    $(document).ready(function () {
+        $("#VIN").change(checkvinalreadyexist);
+    })
+
+</script>
 }

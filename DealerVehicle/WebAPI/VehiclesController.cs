@@ -29,12 +29,19 @@ namespace DealerVehicle.WebAPI
             var result = JsonConvert.SerializeObject(vehiclerepo.Read(), new JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore });
             return Ok(result);
         }
+        [Route("api/vehicles/checkvin/{vin}")]
+        [HttpGet]
+        public IHttpActionResult GetVIN(string vin)
+        {
+            var vehiclevin = vehiclerepo.Read().Where(x => x.VIN == vin).Count();
+            return Ok(vehiclevin);
+        }
 
         // GET: api/Vehicles/5
         [ResponseType(typeof(Vehicle))]
         public IHttpActionResult GetVehicle(int id)
         {
-            Vehicle vehicle = vehiclerepo.Read().Where(x => x.DealerId == id).FirstOrDefault(); ;
+            Vehicle vehicle = vehiclerepo.Read().Where(x => x.DealerId == id).FirstOrDefault(); 
             if (vehicle == null)
             {
                 return NotFound();
