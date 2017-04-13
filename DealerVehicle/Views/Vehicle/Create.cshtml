@@ -97,7 +97,8 @@
 
     function checkvinalreadyexist() {
         var vinnumber = $("#VIN").val();
-        $.get("../api/vehicles/checkvin/" + vinnumber, responsecompleted);
+        $.ajax({ url: "../api/vehicles/checkvin/" + vinnumber, type: "GET", success: responsecompleted });
+        //$.get("../api/vehicles/checkvin/" + vinnumber, responsecompleted);
     }
     var responsecompleted = function (response) {
         if (response != 0) {

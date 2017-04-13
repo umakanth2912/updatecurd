@@ -9,49 +9,111 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
+<div ng-app="Dealerapp">
+    <div ng-controller="Dealercontroller">
+        <table class="table">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.DealerName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DealerCity)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DealerCountry)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DealerPhoneNumber)
+                </th>
+                <th></th>
+                <th></th>
+            </tr>
 
-<table class="table" id="newdealer">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.DealerName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DealerCity)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DealerCountry)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DealerPhoneNumber)
-        </th>
-        <th></th>
-        <th></th>
-    </tr>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DealerName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DealerCity)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DealerCountry)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DealerPhoneNumber)
+                    </td>
+                    <td>
+                        <a href="@Url.Action("DealerInventory","Dealer",new { dealerid = item.Id})">View Inventory</a>
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        <a href="#" ng-click="getDealer(@item.Id)">Details</a> |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                </tr>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DealerName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DealerCity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DealerCountry)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DealerPhoneNumber)
-            </td>
-            <td>
-                <a href="@Url.Action("DealerInventory","Dealer",new { dealerid = item.Id})">View Inventory</a>
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
-        </tr>
-    }
+            }
 
-</table>
+        </table>
+        <div ng-show="Dealer">
+            <hr />
+            <h3>Dealer Details</h3>
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.DealerName)
+                </dt>
+                <dd>
+                    : <label ng-bind="Dealer.DealerName | uppercase"></label>
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DealerCity)
+                </dt>
+                <dd>
+                    : <label ng-bind="Dealer.DealerCity | uppercase"></label>
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DealerCountry)
+                </dt>
+                <dd>
+                    : <label ng-bind="Dealer.DealerCountry | uppercase"></label>
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.DealerPhoneNumber)
+                </dt>
+                <dd>
+                    : <label ng-bind="Dealer.DealerPhoneNumber | uppercase"></label>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
+@section Scripts{
+
+    <script src="~/Scripts/angular.js"></script>
+
+
+    <script>
+        var dealerservice = function ($http) {
+            this.getDealer = function (id, success) {
+                $http.get("../api/dealers/" + id).then(function (data) {
+                    if (typeof success === "function") {
+                        success(data);
+                    }
+                });
+            }
+        }
+        var app = angular.module("Dealerapp", []);
+        app.service("DealerService", dealerservice);
+        app.controller("Dealercontroller", function ($scope, DealerService) {
+            $scope.getDealer = function (id) {
+                var service = DealerService.getDealer(id, function (data) {
+                    $scope.Dealer = JSON.parse(data.data);
+                });
+            }
+
+        });
+    </script>
+
+}

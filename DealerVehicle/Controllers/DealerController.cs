@@ -41,7 +41,7 @@ namespace DealerVehicle.Controllers
         public ActionResult DealerInventory(int dealerid)
         {
             ViewBag.Dealer = Dealer.Read().Where(x=> x.Id== dealerid);
-            Vehicle vehicleslist = Vehicle.Read().Where(x => x.DealerId == dealerid).FirstOrDefault();
+           List<Vehicle> vehicleslist = Vehicle.Read().Where(x => x.DealerId == dealerid).ToList();
             return View(vehicleslist);
 
         }

@@ -33,6 +33,7 @@ namespace DealerVehicle.WebAPI
         }
 
         // GET: api/Dealers/5
+        [Route("api/dealers/{id}")]
         [ResponseType(typeof(Dealer))]
         public IHttpActionResult GetDealer(int id)
         {
@@ -42,7 +43,7 @@ namespace DealerVehicle.WebAPI
                 return NotFound();
             }
 
-            return Ok(dealer);
+            return Ok(Newtonsoft.Json.JsonConvert.SerializeObject(dealer,new Newtonsoft.Json.JsonSerializerSettings { ReferenceLoopHandling = ReferenceLoopHandling.Ignore }));
         }
 
         // PUT: api/Dealers/5
